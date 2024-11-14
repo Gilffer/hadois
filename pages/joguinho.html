@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fia e Fio - Efeito de Coração</title>
+    <title>Fia e Fio - Efeito com Crescimento</title>
     <style>
         body {
             display: flex;
@@ -31,8 +31,8 @@
 
         // Configuração dos textos "Fia" e "Fio"
         const texts = [
-            { text: 'Fia', x: 50, y: 50, dx: 2, dy: 2, color: 'hotpink', font: 'bold 20px Arial' },
-            { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5, color: 'blue', font: 'bold 20px Arial' }
+            { text: 'Fia', x: 50, y: 50, dx: 2, dy: 2, color: 'hotpink', fontSize: 20 },
+            { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5, color: 'blue', fontSize: 20 }
         ];
 
         let hearts = []; // Array para armazenar os corações que aparecem ao cruzar
@@ -69,6 +69,9 @@
             const distance = Math.hypot(fia.x - fio.x, fia.y - fio.y);
             if (distance < 30) { // Ajuste para detectar quando "Fia" e "Fio" estão próximos
                 hearts.push({ x: (fia.x + fio.x) / 2, y: (fia.y + fio.y) / 2, lifetime: 30 }); // Adiciona um coração na posição média
+                // Aumenta o tamanho da fonte dos textos
+                fia.fontSize += 1;
+                fio.fontSize += 1;
             }
         }
 
@@ -85,7 +88,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             texts.forEach(textObj => {
-                ctx.font = textObj.font;
+                ctx.font = `bold ${textObj.fontSize}px Arial`;
                 ctx.fillStyle = textObj.color;
                 ctx.fillText(textObj.text, textObj.x, textObj.y);
 
@@ -97,7 +100,7 @@
                 if (textObj.x + ctx.measureText(textObj.text).width > canvas.width || textObj.x < 0) {
                     textObj.dx *= -1; // Inverte a direção horizontal
                 }
-                if (textObj.y > canvas.height || textObj.y < 20) {
+                if (textObj.y > canvas.height || textObj.y < textObj.fontSize) {
                     textObj.dy *= -1; // Inverte a direção vertical
                 }
             });
