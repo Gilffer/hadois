@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fia e Fio - Rastro Arco-Íris</title>
+    <title>Fia e Fio - Rastro Arco-Íris Suave</title>
     <style>
         body {
             display: flex;
@@ -27,14 +27,14 @@
 
         // Configuração dos textos "Fia" e "Fio" com cores e estilos diferentes
         const texts = [
-            { text: 'Fia', x: 50, y: 50, dx: 2, dy: 2, colorIndex: 0, font: 'bold 20px Arial' },
-            { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5, colorIndex: 180, font: 'bold 20px Arial' }
+            { text: 'Fia', x: 50, y: 50, dx: 2, dy: 2, color: 'hotpink', colorIndex: 0, font: 'bold 20px Arial' },
+            { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5, color: 'blue', colorIndex: 180, font: 'bold 20px Arial' }
         ];
 
-        // Cores para o efeito arco-íris
+        // Função para obter uma cor de arco-íris com base no índice
         function getRainbowColor(index) {
             const hue = (index % 360);
-            return `hsl(${hue}, 100%, 50%)`;
+            return `hsla(${hue}, 100%, 50%, 0.3)`; // O alfa (0.3) torna o rastro mais fraco
         }
 
         function drawTexts() {
@@ -43,8 +43,13 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             texts.forEach(textObj => {
+                // Desenha o rastro com arco-íris sutil
                 ctx.font = textObj.font;
                 ctx.fillStyle = getRainbowColor(textObj.colorIndex);
+                ctx.fillText(textObj.text, textObj.x, textObj.y);
+
+                // Desenha o texto principal com cor sólida para mais destaque
+                ctx.fillStyle = textObj.color;
                 ctx.fillText(textObj.text, textObj.x, textObj.y);
 
                 // Atualiza a posição dos textos
