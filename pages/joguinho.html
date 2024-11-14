@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fia e Fio - Coração Bonito</title>
+    <title>Fia e Fio - Coração Simples</title>
     <style>
         body {
             display: flex;
@@ -37,17 +37,14 @@
         let hearts = []; // Array para armazenar os corações que aparecem ao cruzar
         let sparks = []; // Array para armazenar brilhos que aparecem ao tocar as bordas
 
-        // Função para desenhar um coração mais detalhado e bonito
+        // Função para desenhar um coração simples e fixo
         function drawHeart(x, y, size) {
             ctx.save();
             ctx.translate(x, y);
             ctx.scale(size / 50, size / 50); // Ajuste do tamanho do coração
 
             // Criar gradiente para o coração
-            const gradient = ctx.createLinearGradient(-25, -25, 25, 50);
-            gradient.addColorStop(0, '#ff4e50');
-            gradient.addColorStop(1, '#ff0000');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = 'red';
 
             // Desenho do coração
             ctx.beginPath();
@@ -66,7 +63,7 @@
                     x: (fia.x + fio.x) / 2, 
                     y: (fia.y + fio.y) / 2, 
                     lifetime: 180, // 180 frames (~3 segundos)
-                    initialSize: 20 // Tamanho inicial do coração
+                    size: 50 // Tamanho fixo do coração
                 });
             }
         }
@@ -89,9 +86,7 @@
         function drawHearts() {
             hearts = hearts.filter(heart => heart.lifetime > 0); // Remove corações antigos
             hearts.forEach(heart => {
-                // Cria um efeito de pulsação alterando o tamanho
-                const pulseSize = heart.initialSize + 5 * Math.sin((180 - heart.lifetime) / 10);
-                drawHeart(heart.x, heart.y, pulseSize);
+                drawHeart(heart.x, heart.y, heart.size);
                 heart.lifetime -= 1; // Diminui o tempo de vida do coração
             });
         }
