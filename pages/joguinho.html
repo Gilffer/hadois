@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fia e Fio - Brilho e Coração</title>
+    <title>Fia e Fio - Itens Aleatórios</title>
     <style>
         body {
             display: flex;
@@ -34,36 +34,69 @@
             { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5, color: 'blue', fontSize: 30 }
         ];
 
-        let hearts = []; // Array para armazenar os corações que aparecem ao cruzar
+        let items = []; // Array para armazenar os itens que aparecem ao cruzar
         let sparks = []; // Array para armazenar brilhos que aparecem ao tocar as bordas
 
-        // Função para desenhar um coração maior
-        function drawHeart(x, y) {
+        // Função para desenhar um coração pulsante
+        function drawHeart(x, y, size) {
             ctx.save();
             ctx.fillStyle = 'red';
             ctx.beginPath();
             ctx.moveTo(x, y);
-            ctx.bezierCurveTo(x - 15, y - 15, x - 20, y + 15, x, y + 30);
-            ctx.bezierCurveTo(x + 20, y + 15, x + 15, y - 15, x, y);
+            ctx.bezierCurveTo(x - size / 2, y - size / 2, x - size, y + size / 2, x, y + size);
+            ctx.bezierCurveTo(x + size, y + size / 2, x + size / 2, y - size / 2, x, y);
             ctx.fill();
             ctx.restore();
         }
 
-        // Função para desenhar um brilho
-        function drawSpark(x, y) {
+        // Função para desenhar um pedaço de pizza
+        function drawPizza(x, y, size) {
             ctx.save();
-            ctx.fillStyle = 'rgba(255, 255, 0, 0.6)';
+            ctx.fillStyle = 'orange';
             ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - size / 2, y + size);
+            ctx.lineTo(x + size / 2, y + size);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = 'yellow';
+            ctx.beginPath();
+            ctx.arc(x, y + size / 2, size / 8, 0, Math.PI * 2);
+            ctx.fill(); // Adiciona um "topping" de queijo
+            ctx.restore();
+        }
+
+        // Função para desenhar um hambúrguer
+        function drawBurger(x, y, size) {
+            ctx.save();
+            ctx.fillStyle = 'brown';
+            ctx.beginPath();
+            ctx.rect(x - size / 2, y, size, size / 4); // Parte do pão de cima
+            ctx.fill();
+            ctx.fillStyle = 'green';
+            ctx.fillRect(x - size / 2, y + size / 4, size, size / 8); // Alface
+            ctx.fillStyle = 'red';
+            ctx.fillRect(x - size / 2, y + size / 4 + size / 8, size, size / 8); // Carne
+            ctx.fillStyle = 'brown';
+            ctx.beginPath();
+            ctx.rect(x - size / 2, y + size / 2, size, size / 4); // Parte do pão de baixo
             ctx.fill();
             ctx.restore();
         }
 
-        function checkCollisionAndAddHeart() {
+        // Função para adicionar um item aleatório ao cruzar
+        function checkCollisionAndAddItem() {
             const [fia, fio] = texts;
             const distance = Math.hypot(fia.x - fio.x, fia.y - fio.y);
             if (distance < 40) { // Ajuste para detectar quando "Fia" e "Fio" estão próximos
-                hearts.push({ x: (fia.x + fio.x) / 2, y: (fia.y + fio.y) / 2, lifetime: 50 }); // Adiciona um coração na posição média
+                const randomItem = Math.floor(Math.random() * 3); // Seleciona aleatoriamente 0 (coração), 1 (pizza), 2 (hambúrguer)
+                items.push({ 
+                    x: (fia.x + fio.x) / 2, 
+                    y: (fia.y + fio.y) / 2, 
+                    lifetime: 180, // 180 frames (~3 segundos)
+                    type: randomItem, 
+                    initialSize: 20 // Tamanho inicial do item
+                });
             }
         }
 
@@ -82,11 +115,19 @@
             }
         }
 
-        function drawHearts() {
-            hearts = hearts.filter(heart => heart.lifetime > 0); // Remove corações antigos
-            hearts.forEach(heart => {
-                drawHeart(heart.x, heart.y);
-                heart.lifetime -= 1; // Diminui o tempo de vida do coração
+        function drawItems() {
+            items = items.filter(item => item.lifetime > 0); // Remove itens antigos
+            items.forEach(item => {
+                // Cria um efeito de pulsação alterando o tamanho
+                const pulseSize = item.initialSize + 5 * Math.sin((180 - item.lifetime) / 10);
+                if (item.type === 0) {
+                    drawHeart(item.x, item.y, pulseSize);
+                } else if (item.type === 1) {
+                    drawPizza(item.x, item.y, pulseSize);
+                } else if (item.type === 2) {
+                    drawBurger(item.x, item.y, pulseSize);
+                }
+                item.lifetime -= 1; // Diminui o tempo de vida do item
             });
         }
 
@@ -96,6 +137,15 @@
                 drawSpark(spark.x, spark.y);
                 spark.lifetime -= 1; // Diminui o tempo de vida do brilho
             });
+        }
+
+        function drawSpark(x, y) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 0, 0.6)';
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
 
         function drawTexts() {
@@ -115,11 +165,11 @@
                 checkBorderCollision(textObj);
             });
 
-            // Verifica colisão entre "Fia" e "Fio" e adiciona o coração
-            checkCollisionAndAddHeart();
+            // Verifica colisão entre "Fia" e "Fio" e adiciona um item aleatório
+            checkCollisionAndAddItem();
 
-            // Desenha os corações
-            drawHearts();
+            // Desenha os itens
+            drawItems();
 
             // Desenha os brilhos
             drawSparks();
