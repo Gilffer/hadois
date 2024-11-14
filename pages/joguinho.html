@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joguinhos Simples</title>
+    <title>Joguinhos Simples - Fia e Fio</title>
     <style>
         body {
             display: flex;
@@ -19,43 +19,42 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="500" height="400"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        let ball = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            radius: 15,
-            dx: 2,
-            dy: 2
-        };
+        // Configuração dos textos "Fia" e "Fio"
+        const texts = [
+            { text: 'Fia', x: 50, y: 50, dx: 2, dy: 2 },
+            { text: 'Fio', x: 200, y: 150, dx: -2, dy: 1.5 }
+        ];
 
-        function drawBall() {
+        function drawTexts() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'blue';
-            ctx.fill();
-            ctx.closePath();
+            texts.forEach(textObj => {
+                ctx.font = '20px Arial';
+                ctx.fillStyle = 'blue';
+                ctx.fillText(textObj.text, textObj.x, textObj.y);
 
-            ball.x += ball.dx;
-            ball.y += ball.dy;
+                // Atualiza a posição dos textos
+                textObj.x += textObj.dx;
+                textObj.y += textObj.dy;
 
-            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
-                ball.dx *= -1;
-            }
+                // Verifica colisão com as bordas do canvas
+                if (textObj.x + ctx.measureText(textObj.text).width > canvas.width || textObj.x < 0) {
+                    textObj.dx *= -1; // Inverte a direção horizontal
+                }
+                if (textObj.y > canvas.height || textObj.y < 20) {
+                    textObj.dy *= -1; // Inverte a direção vertical
+                }
+            });
 
-            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-                ball.dy *= -1;
-            }
-
-            requestAnimationFrame(drawBall);
+            requestAnimationFrame(drawTexts);
         }
 
-        drawBall();
+        drawTexts();
     </script>
 </body>
 </html>
